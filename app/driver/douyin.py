@@ -23,7 +23,7 @@ class DouyinDriver(BaseDriver):
         time.sleep(2)
         self.session(text='首页').click()
         self.session(text='推荐').click()
-        self.do_forever(self.swipe_up)
+        self.do_forever(self.swipe_down)
 
     def monitor(self):
         time.sleep(5)

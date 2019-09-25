@@ -11,6 +11,8 @@ class BaseDriver:
         self.session = None
         self.pkg_name = None
         self.activity = None
+        self.size = self.device.window_size()
+        self.width, self.height = self.size
 
         # set logger
         self.logger = logging.getLogger(__name__)
@@ -20,6 +22,12 @@ class BaseDriver:
     def app_start(self):
         self.device.app_start(self.pkg_name, self.activity)
         self.session = self.device.session(self.pkg_name, attach=True)
+
+    def size(self):
+        self.device.window_size()
+
+    def get_source(self):
+        return self.device.dump_hierarchy()
 
     def get_current_package(self):
         pkg_name = self.device.info.get('currentPackageName')
@@ -32,7 +40,7 @@ class BaseDriver:
             self.logger.info('action to do....')
             action(*args, **kwargs)
             # time.sleep(1)
-            self.logger.info('action done!')
+            self.logger.info(f'{action.__name__} action done!')
 
     def swipe(self, *args):
         self.device.swipe(*args)
@@ -45,12 +53,12 @@ class BaseDriver:
         self.device.swipe(0.9, 0.5, 0.1, 0.5, t)
         time.sleep(delay)
 
-    def swipe_up(self, t=0.05, delay=1):
-        self.device.swipe(500, 1000, 500, 20, t)
+    def swipe_up(self, t=0.02, delay=0.2):
+        self.device.swipe(self.width * 0.8, self.height * 0.8, self.width * 0.8, self.height * 0.1, t)
         time.sleep(delay)
 
-    def swipe_down(self, t=0.05, delay=1):
-        self.device.swipe(500, 20, 500, 900, t)
+    def swipe_down(self, t=0.02, delay=0.5):
+        self.device.swipe(self.width * 0.5, self.height * 0.2, self.width * 0.5, self.height * 0.8, t)
         time.sleep(delay)
 
     def exists(self, **kwargs):
