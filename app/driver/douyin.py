@@ -5,6 +5,9 @@ from app.driver.base import BaseDriver
 
 
 class DouyinDriver(BaseDriver):
+
+    SEARCH_BUTTON = (0.926, 0.066)
+
     def __init__(self):
         super().__init__()
         self.pkg_name = 'com.ss.android.ugc.aweme'
@@ -25,19 +28,18 @@ class DouyinDriver(BaseDriver):
         self.session(text='推荐').click()
         self.do_forever(self.swipe_down)
 
+        # self.session(text='我').click()
+        # self.session(text='关注').click()
+        # self.session(text='吴谨言Y').click()
+        # self.session(text='粉丝').click()
+        # self.do_forever(self.fling)
+
     def monitor(self):
         time.sleep(5)
         while True:
             # 检测并关闭弹窗
             self._close_popup()
             # 检测抖音是否关闭
-            if not self._is_douyin_alive():
+            if not self.is_app_alive():
                 # 终止当前进程
                 os.kill(os.getpid(), SIGKILL)
-
-    def _is_douyin_alive(self):
-        if self.get_current_package() != self.pkg_name:
-            self.logger.info('抖音已经退出')
-            return False
-        else:
-            return True
