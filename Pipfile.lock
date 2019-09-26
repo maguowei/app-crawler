@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0720f30f2f692b02fe2b245122f6dd08fe75d395c489d540c92a913e33409f2b"
+            "sha256": "f2e927a56b4d22887178b28a2afc7f7b62e2cc6b85d5851c66b6dd6d2d47313f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -192,6 +192,12 @@
                 "sha256:abd3cdc35bb8a83fac7506821effa1bc25465ef0a3216d86615dfa4f31266dd6"
             ],
             "version": "==0.4.1"
+        },
+        "fire": {
+            "hashes": [
+                "sha256:6865fefc6981a713d2ce56a2a2c92c56c729269f74a6cddd6f4b94d16ae084c9"
+            ],
+            "version": "==0.2.1"
         },
         "h11": {
             "hashes": [
@@ -534,6 +540,12 @@
             ],
             "version": "==2.0.5"
         },
+        "termcolor": {
+            "hashes": [
+                "sha256:1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b"
+            ],
+            "version": "==1.1.0"
+        },
         "tornado": {
             "hashes": [
                 "sha256:0662d28b1ca9f67108c7e3b77afabfb9c7e87bde174fbda78186ecedc2499a9d",
@@ -555,9 +567,9 @@
         },
         "uiautomator2": {
             "hashes": [
-                "sha256:59b4a2d297b3240787b9a73e4acb07dfe78211119e18847be56a701542e46bfc"
+                "sha256:bee294494c8ebeb9e1e3edff5d1af6f136b352ca02dd8bf8e55fcfcf1499533a"
             ],
-            "version": "==1.3.3"
+            "version": "==1.3.4"
         },
         "urllib3": {
             "hashes": [

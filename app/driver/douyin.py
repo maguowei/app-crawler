@@ -21,18 +21,34 @@ class DouyinDriver(BaseDriver):
             except:
                 pass
 
-    def run(self):
+    def crawler_feed(self):
         self.app_start()
         time.sleep(2)
         self.session(text='首页').click()
         self.session(text='推荐').click()
+        # self.do_forever(self.swipe_down)
         self.do_forever(self.swipe_down)
 
-        # self.session(text='我').click()
-        # self.session(text='关注').click()
-        # self.session(text='吴谨言Y').click()
-        # self.session(text='粉丝').click()
-        # self.do_forever(self.fling)
+    def crawler_stars(self):
+        self.app_start()
+        time.sleep(2)
+        self.session(text='首页').click()
+        self.device.click(*DouyinDriver.SEARCH_BUTTON)
+        self.session(text='明星爱DOU榜').click()
+        time.sleep(15)
+        self.device.click(0.357, 0.287)
+        time.sleep(10)
+        self.do_forever(self.fling)
+
+    def crawler_follower(self):
+        self.app_start()
+        time.sleep(2)
+        self.session(text='首页').click()
+        self.session(text='我').click()
+        self.session(text='关注').click()
+        self.session(text='吴谨言Y').click()
+        self.session(text='粉丝').click()
+        self.do_forever(self.fling)
 
     def monitor(self):
         time.sleep(5)

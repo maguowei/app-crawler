@@ -40,6 +40,7 @@ class BaseDriver:
             action_name = action.__name__
             self.logger.info(f'{action_name} action to do....')
             if self.is_app_alive():
+                # print(self.get_source())
                 action(*args, **kwargs)
             else:
                 time.sleep(2)
@@ -60,7 +61,7 @@ class BaseDriver:
         self.device.swipe(self.width * 0.8, self.height * 0.8, self.width * 0.8, self.height * 0.1, t)
         time.sleep(delay)
 
-    def swipe_down(self, t=0.1, delay=0.8):
+    def swipe_down(self, t=0.1, delay=0.5):
         self.device.swipe(self.width * 0.5, self.height * 0.2, self.width * 0.5, self.height * 0.8, t)
         time.sleep(delay)
 
