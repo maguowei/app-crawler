@@ -34,11 +34,21 @@ class BaseDriver:
         return pkg_name
 
     def do_forever(self, action, *args, **kwargs):
+        num = 0
         """TODO 更改为装饰器
         """
         while True:
+            num += 1
+            if num > 2000:
+                num = 0
+                self.logger.info('自动重启app')
+                self.close_app()
+                time.sleep(10)
+                self.app_start()
+                self.logger.info('重启app成功')
+
             action_name = action.__name__
-            self.logger.info(f'{action_name} action to do....')
+            self.logger.info(f'{action_name} action to do...; num: {num}')
             if self.is_app_alive():
                 # print(self.get_source())
                 action(*args, **kwargs)
@@ -57,12 +67,12 @@ class BaseDriver:
         self.device.swipe(0.9, 0.5, 0.1, 0.5, t)
         time.sleep(delay)
 
-    def swipe_up(self, t=0.05, delay=0.2):
-        self.device.swipe(self.width * 0.8, self.height * 0.8, self.width * 0.8, self.height * 0.1, t)
+    def swipe_up(self, t=0.02, delay=0.2):
+        self.device.swipe(self.width * 0.5, self.height * 0.8, self.width * 0.5, self.height * 0.3, t)
         time.sleep(delay)
 
-    def swipe_down(self, t=0.1, delay=0.5):
-        self.device.swipe(self.width * 0.5, self.height * 0.2, self.width * 0.5, self.height * 0.8, t)
+    def swipe_down(self, t=0.02, delay=0.5):
+        self.device.swipe(self.width * 0.5, self.height * 0.1, self.width * 0.5, self.height * 0.8, t)
         time.sleep(delay)
 
     def scroll(self):

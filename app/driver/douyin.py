@@ -2,6 +2,7 @@ import os
 import time
 from signal import SIGKILL
 from app.driver.base import BaseDriver
+from app.utils.decorator import retry
 
 
 class DouyinDriver(BaseDriver):
@@ -21,13 +22,13 @@ class DouyinDriver(BaseDriver):
             except:
                 pass
 
+    @retry(10)
     def crawler_feed(self):
         self.app_start()
         time.sleep(2)
         self.session(text='首页').click()
         self.session(text='推荐').click()
-        # self.do_forever(self.swipe_down)
-        self.do_forever(self.swipe_down)
+        self.do_forever(self.swipe_up)
 
     def crawler_stars(self):
         self.app_start()
