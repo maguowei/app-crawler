@@ -1,4 +1,5 @@
-from app.models.db import db, redis_client
+from app.service.redis_service import redis_client
+from app.service.mongo_service import db
 
 
 def mongo_export():
@@ -9,7 +10,7 @@ def mongo_export():
 
 def redis_export():
     uids = []
-    for uid in redis_client.sscan_iter('users'):
+    for uid in redis_client.sscan_iter('varys:douyin-crawler-user'):
         uids.append(int(uid))
 
     uids.sort()
@@ -19,5 +20,5 @@ def redis_export():
 
 
 if __name__ == '__main__':
-    # redis_export()
-    mongo_export()
+    redis_export()
+    # mongo_export()
