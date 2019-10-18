@@ -1,9 +1,12 @@
 # redis
 REDIS = {
-    'HOST': '127.0.0.1',
-    'PORT': 6379,
-    'DATABASE': 0,
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 0,
+    'encoding': 'utf-8',
+    'encoding_errors': 'strict',
+    'decode_responses': True
 }
 
 # MongoDB
-MONGODB_URI = 'mongodb://root:example@127.0.0.1:27017/'
+MONGODB_URI = 'mongodb://root:example@127.0.0.1:27017'

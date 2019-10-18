@@ -2,7 +2,7 @@ def retry(times=3):
     def decorator(func):
         def wrapper(*args, **kwargs):
             t = 0
-            while t < times:
+            while t <= times:
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
