@@ -8,14 +8,24 @@ class DouyinDriver(BaseDriver):
 
     SEARCH_BUTTON = (0.926, 0.066)
 
+    # https://s3.pstatp.com/ies/resource/falcon/douyin_falcon/pkg/common_4276a6c.js
     URL_SCHEMA_MAP = {
-        'user_profile': 'snssdk1128://user/profile/{uid}?refer=web',
-        'video': 'snssdk1128://aweme/detail/{aweme_id}?refer=web',
+        'home': "snssdk1128://feed?refer=web",
+        'user': 'snssdk1128://user/profile/{uid}?refer=web',
+        'detail': 'snssdk1128://aweme/detail/{aweme_id}?refer=web',
         'challenge': 'snssdk1128://challenge/detail/{challenge_id}?refer=web',
-        'feed': "snssdk1128://feed?refer=web",
-        'poi":': 'snssdk1128://poi/?id={poi_id}',
         'music': 'snssdk1128://music/detail/{music_id}?refer=web',
-        'webview': 'snssdk1128://webview?url={url}',
+        'live': 'snssdk1128://live?room_id={room_id}&user_id={user_id}&from=webview&refer=web',
+        'poi":': 'snssdk1128://poi/?id={poi_id}',
+        'webview': 'snssdk1128://webview?url={url}&from=webview&refer=web',
+        'webview_fullscreen': 'snssdk1128://webview?url={{url}}&from=webview&hide_nav_bar=1&refer=web',
+        'poidetail': 'snssdk1128://poi/detail?id={{id}}&from=webview&refer=web',
+        'forward': 'snssdk1128://forward/detail/{id}',
+        'billboard_word': 'snssdk1128://search/trending',
+        'billboard_video': "snssdk1128://search/trending?type=1",
+        'billboard_music': "snssdk1128://search/trending?type=2",
+        'billboard_positive': "snssdk1128://search/trending?type=3",
+        'billboard_star': "snssdk1128://search/trending?type=4",
     }
 
     def __init__(self):
@@ -30,7 +40,7 @@ class DouyinDriver(BaseDriver):
         :return:
         """
         self.app_start()
-        self.open_schema(self.URL_SCHEMA_MAP['user_profile'].format(uid=uid))
+        self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
         time.sleep(1)
         self.device.press('back')
 
@@ -91,7 +101,7 @@ class DouyinDriver(BaseDriver):
         time.sleep(2)
         uids = ['84990209480', '88445518961', '104255897823']
         for uid in uids:
-            self.open_schema(self.URL_SCHEMA_MAP['user_profile'].format(uid=uid))
+            self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
             time.sleep(0.2)
             self.session(text='关注').click()
             for i in range(10):
