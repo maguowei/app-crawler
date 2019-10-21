@@ -54,9 +54,10 @@ class DouyinDriver(BaseDriver):
     def crawler_users(self):
         self.app_start()
 
-        for uid in redis_client.sscan_iter('varys:douyin-crawler-user'):
-            self.open_user_home(int(uid))
-            time.sleep(0.2)
+        for uid in redis_client.sscan_iter('users'):
+            print(uid)
+            self.open_user_home(uid)
+            time.sleep(0.1)
 
     @retry(10)
     def crawler_feed(self):
@@ -88,9 +89,11 @@ class DouyinDriver(BaseDriver):
     def crawler_follower(self):
         self.app_start()
         time.sleep(2)
-        self.session(text='首页').click()
-        self.session(text='我').click()
-        self.session(text='关注').click()
-        self.session(text='吴谨言Y').click()
-        self.session(text='粉丝').click()
-        self.do_forever(self.fling)
+        uids = ['84990209480', '88445518961', '104255897823']
+        for uid in uids:
+            self.open_schema(self.URL_SCHEMA_MAP['user_profile'].format(uid=uid))
+            time.sleep(0.2)
+            self.session(text='关注').click()
+            for i in range(10):
+                time.sleep(0.2)
+                self.fling()
