@@ -1,4 +1,5 @@
 import redis
+import pymongo
 from pymongo import MongoClient
 from app import settings
 

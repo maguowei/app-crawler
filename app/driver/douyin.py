@@ -14,6 +14,7 @@ class DouyinDriver(BaseDriver):
         'user': 'snssdk1128://user/profile/{uid}?refer=web',
         'detail': 'snssdk1128://aweme/detail/{aweme_id}?refer=web',
         'challenge': 'snssdk1128://challenge/detail/{challenge_id}?refer=web',
+        # 'schema': 'aweme://aweme/challenge/detail?cid=1643115473320972&is_commerce=1',
         'music': 'snssdk1128://music/detail/{music_id}?refer=web',
         'live': 'snssdk1128://live?room_id={room_id}&user_id={user_id}&from=webview&refer=web',
         'poi":': 'snssdk1128://poi/?id={poi_id}',
