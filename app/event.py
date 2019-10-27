@@ -62,7 +62,7 @@ class Events:
                     'signature': user['signature'],
                     'custom_verify': user['custom_verify'],
                     'gender': user['gender'],
-                    'school_name': user['school_name'],
+                    'school_name': user.get('school_name', ''),
                     'avatar_uri': user['avatar_uri'],
                     'share_qrcode_uri': user['share_qrcode_uri'],
                     'birthday': user['birthday'],
