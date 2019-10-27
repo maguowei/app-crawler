@@ -3,7 +3,7 @@ from app.driver.base import BaseDriver
 from app.utils.decorator import retry
 from app.service.redis_service import DouyinUser, DouyinUserFollowing, DouyinUserFollower, \
     DouyinUserErr, DouyinUserInfo, DouyinUserBigV
-from app.service.mongo_service import db
+from app.service.store import db
 from app.service.redis_service import redis_client
 
 

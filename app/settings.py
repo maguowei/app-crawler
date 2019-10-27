@@ -1,12 +1,19 @@
-# redis
+import os
+
+# Redis
 REDIS = {
-    'host': '127.0.0.1',
-    'port': 6379,
-    'db': 0,
-    'encoding': 'utf-8',
-    'encoding_errors': 'strict',
-    'decode_responses': True
+    'host': os.environ.get('REDIS_HOST', 'redis'),
+    'port': os.environ.get('REDIS_PORT', 6379),
+    'db': os.environ.get('REDIS_DB', 0),
+    'decode_responses': True,
 }
 
-# MongoDB
-MONGODB_URI = 'mongodb://root:example@127.0.0.1:27017'
+# MySQL
+MYSQL = {
+    'host': os.environ.get('DB_HOST', 'mysql'),
+    'port': os.environ.get('DB_PORT', 3306),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'root'),
+    'db': 'varys',
+    # 'charset': 'utf8mb4',
+}

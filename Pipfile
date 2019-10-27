@@ -8,11 +8,12 @@ verify_ssl = true
 [packages]
 uiautomator2 = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 mitmproxy = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
-pymongo = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 redis = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 ipython = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 weditor = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 fire = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
+sqlalchemy = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
+pymysql = {index = "https://mirrors.aliyun.com/pypi/simple/",version = "*"}
 
 [requires]
 python_version = "3.7"

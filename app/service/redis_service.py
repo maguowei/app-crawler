@@ -75,14 +75,14 @@ class DouyinUser(DouyinBase):
     """抖音用户池"""
     @classmethod
     def get_key(cls):
-        return 'dy:users'
+        return 'dy:user'
 
 
 class DouyinUserBigV(DouyinUserZsetBase):
     """抖音大V用户池"""
     @classmethod
     def get_key(cls):
-        return 'dy:users:bigv'
+        return 'dy:user:score'
 
 
 class DouyinUserInfo(DouyinBase):
