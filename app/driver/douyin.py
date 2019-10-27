@@ -57,7 +57,7 @@ class DouyinDriver(BaseDriver):
         :param aweme_id: 6747930437261298951
         :return:
         """
-        self.open_schema(self.URL_SCHEMA_MAP['video'].format(aweme_id=aweme_id))
+        self.open_schema(self.URL_SCHEMA_MAP['detail'].format(aweme_id=aweme_id))
 
     @retry(10)
     def crawler_users(self):
@@ -82,6 +82,18 @@ class DouyinDriver(BaseDriver):
         time.sleep(0.1)
         self.device.press('back')
         redis_client.smove(DouyinUser.get_key(), DouyinUserInfo.get_key(), uid)
+
+    @retry(10)
+    def crawler_videos(self):
+        for aweme_id in ['6752388879812136203', '6746831112162528519', '6752395655202852100']:
+            self.crawler_video(aweme_id)
+
+    @retry(3)
+    def crawler_video(self, aweme_id):
+        self.logger.info(f'爬取视频: {aweme_id}')
+        self.open_video(aweme_id)
+        time.sleep(0.1)
+        self.device.press('back')
 
     @retry(10)
     def crawler_feed(self):
