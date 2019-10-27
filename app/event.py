@@ -1,7 +1,7 @@
 import json
 import mitmproxy.http
 import mitmproxy.proxy.protocol
-from app.models.douyin import Document
+from app.models.douyin import User
 from app.service.redis_service import DouyinUser
 
 
@@ -54,7 +54,36 @@ class Events:
             data = json.loads(content)
             if data['status_code'] == 0:
                 user = data['user']
-                # db['douyin_user'].replace_one({'uid': user['uid']}, user, upsert=True)
+                data = {
+                    'uid': user['uid'],
+                    'short_id': user['short_id'],
+                    'unique_id': user['unique_id'],
+                    'nickname': user['nickname'],
+                    'signature': user['signature'],
+                    'custom_verify': user['custom_verify'],
+                    'gender': user['gender'],
+                    'school_name': user['school_name'],
+                    'avatar_uri': user['avatar_uri'],
+                    'share_qrcode_uri': user['share_qrcode_uri'],
+                    'birthday': user['birthday'],
+                    'region': user['region'],
+                    'country': user['country'],
+                    'province': user['province'],
+                    'city': user['city'],
+                    'is_verified': user['is_verified'],
+                    'verify_info': user['verify_info'],
+                    'is_star': user['is_star'],
+                    'room_id': user['room_id'],
+                    'aweme_count': user['aweme_count'],
+                    'following_count': user['following_count'],
+                    'favoriting_count': user['favoriting_count'],
+                    'total_favorited': user['total_favorited'],
+                    'dongtai_count': user['dongtai_count'],
+                    'follower_count': user['follower_count'],
+                    'is_gov_media_vip': user['is_gov_media_vip'],
+                    'followers_detail': user['followers_detail'],
+                }
+                User(**data).save()
 
         # 评论列表 (似乎没有限制条数)
         elif '/aweme/v2/comment/list' in url:
