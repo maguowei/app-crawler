@@ -1,6 +1,8 @@
 import time
 from app.driver.base import BaseDriver
 from app.utils.decorator import retry
+from app.models import session
+from app.models.douyin import User
 from app.service.redis_service import DouyinUser, DouyinUserFollowing, DouyinUserFollower, \
     DouyinUserErr, DouyinUserInfo, DouyinUserBigV
 from app.service.redis_service import redis_client
@@ -100,9 +102,9 @@ class DouyinDriver(BaseDriver):
         """抓取用户关注列表
         """
         time.sleep(2)
-        users = db['scraped_data_douyin_user_info'].find()
+        users = session.query(User.uid)
         for user in users:
-            uid = user['uid']
+            uid = user.uid
             if not (DouyinUserFollower.exist(uid) or DouyinUserErr.exist(uid)):
                 self.logger.info(f'爬取用户关注列表: {uid}')
                 self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
@@ -126,9 +128,9 @@ class DouyinDriver(BaseDriver):
         """抓取用户粉丝列表
         """
         time.sleep(2)
-        users = db['scraped_data_douyin_user_info'].find()
+        users = session.query(User.uid)
         for user in users:
-            uid = user['uid']
+            uid = user.uid
             if not (DouyinUserFollower.exist(uid) or DouyinUserErr.exist(uid)):
                 self.logger.info(f'爬取用户粉丝列表: {uid}')
                 self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
