@@ -58,6 +58,8 @@ class BaseDriver:
             if self.is_app_alive():
                 # print(self.get_source())
                 self.close_popup()
+                if self.exists(text='没有更多了~') or self.exists(text='TA还没有关注任何人'):
+                    break
                 action(*args, **kwargs)
             else:
                 self.close_app()

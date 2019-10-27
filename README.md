@@ -23,9 +23,17 @@ pipenv shell
 uiautomator2 init
 ```
 
-# 抖音安装
+## 抖音安装
 
 - 使用豌豆荚安装旧版抖音APP(v7.5.0以下版本仍然信任用户CA证书)
+
+## weditor
+
+使用web界面查看和定位元素
+```bash
+python -m weditor
+
+```
 
 ## mitmproxy
 

@@ -1,7 +1,8 @@
 from pymongo import MongoClient
 import pymongo
 from app import settings
-from app.service.redis_service import redis_client
+from app.service.redis_service import redis_client, DouyinUserBigV
+
 
 client = MongoClient(settings.MONGODB_URI)
 db = client['douyin_user']
@@ -14,16 +15,10 @@ class MongoService:
         return videos
 
     @classmethod
-    def get_top_users(cls, num=1000):
-        users = db['douyin_user'].find({}, ['uid', 'nickname', 'follower_count']).sort(
+    def get_top_users(cls, num=10000):
+        users = db['douyin_user'].find({'follower_count': {'$gt': 500000}}, ['uid', 'nickname', 'follower_count']).sort(
             'follower_count', pymongo.DESCENDING).limit(num)
         return users
-
-    @classmethod
-    def mongo_export(cls):
-        uids = db['nearby_videos'].distinct('aweme_id')
-        for uid in uids:
-            print(uid)
 
     @classmethod
     def mongo_uid_export(cls):
@@ -37,4 +32,8 @@ if __name__ == '__main__':
     # videos = MongoService.get_top_videos()
     # for v in videos:
     #     print(v)
-    MongoService.mongo_uid_export()
+    users = MongoService.get_top_users(10000)
+    for user in users:
+        print(user)
+        # print(user['uid'], user['follower_count'])
+        # DouyinUserBigV.add(user['uid'], user['follower_count'])
