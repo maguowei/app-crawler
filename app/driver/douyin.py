@@ -157,3 +157,16 @@ class DouyinDriver(BaseDriver):
             else:
                 self.logger.info(f'用户粉丝已经爬取: {uid}')
 
+    def search_users(self, uids=None):
+        """搜索用户"""
+        self.session(resourceId="com.ss.android.ugc.aweme:id/azc").click()
+        self.session.send_keys("shusheng1028", clear=True)
+        self.session(resourceId="com.ss.android.ugc.aweme:id/di9").click()
+        self.session(resourceId="android:id/text1", text="用户").click()
+
+        for unique_id in uids:
+            self.logger.info(f'unique_id: {unique_id}, 爬取')
+            self.session.send_keys(unique_id, clear=True)
+            self.session(resourceId="com.ss.android.ugc.aweme:id/di9").click()
+            time.sleep(0.1)
+

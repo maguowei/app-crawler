@@ -25,7 +25,7 @@ class DouyinUserZsetBase:
         return redis_client.zscore(cls.get_key(), uid)
 
     @classmethod
-    def user_nums(cls):
+    def nums(cls):
         key = cls.get_key()
         return redis_client.zcard(key)
 
@@ -35,7 +35,7 @@ class DouyinUserZsetBase:
             print(uid)
 
     def __str__(self):
-        return f'{self.__class__.__name__}: {self.user_nums()}'
+        return f'{self.__class__.__name__}: {self.nums()}'
 
 
 class DouyinBase:
@@ -58,7 +58,7 @@ class DouyinBase:
         return redis_client.sismember(cls.get_key(), uid)
 
     @classmethod
-    def user_nums(cls):
+    def nums(cls):
         key = cls.get_key()
         return redis_client.scard(key)
 
@@ -68,7 +68,7 @@ class DouyinBase:
             print(uid)
 
     def __str__(self):
-        return f'{self.__class__.__name__}: {self.user_nums()}'
+        return f'{self.__class__.__name__}: {self.nums()}'
 
 
 class DouyinUser(DouyinBase):
