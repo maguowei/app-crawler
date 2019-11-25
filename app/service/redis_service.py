@@ -30,6 +30,14 @@ class DouyinUserZsetBase:
         return redis_client.zcard(key)
 
     @classmethod
+    def pop_max(cls):
+        return redis_client.zpopmax(cls.get_key())
+
+    @classmethod
+    def pop_min(cls):
+        return redis_client.zpopmin(cls.get_key())
+
+    @classmethod
     def export(cls):
         for uid in redis_client.zscan_iter(cls.get_key()):
             print(uid)
@@ -47,6 +55,10 @@ class DouyinBase:
     def add(cls, uid):
         key = cls.get_key()
         redis_client.sadd(key, uid)
+
+    @classmethod
+    def pop(cls):
+        return redis_client.spop(cls.get_key())
 
     @classmethod
     def remove(cls, uid):

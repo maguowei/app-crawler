@@ -1,4 +1,5 @@
 import time
+import sys
 import logging
 import uiautomator2 as u2
 
@@ -6,7 +7,12 @@ FORMAT = "[%(process)d-%(filename)s:%(lineno)s - %(funcName)20s %(levelname)s] %
 
 
 class BaseDriver:
-    def __init__(self):
+    def __init__(self, device_serial=None):
+        self.device_serial = str(device_serial)
+        if self.device_serial:
+            self.device = u2.connect(self.device_serial)
+        else:
+            self.device = u2.connect()
         self.device = u2.connect()
         self.session = None
         self.pkg_name = None
@@ -15,6 +21,7 @@ class BaseDriver:
         self.width, self.height = self.size
 
         self.popup_list = []
+        self.break_list = []
 
         # set logger
         self.logger = logging.getLogger(__name__)
@@ -24,6 +31,9 @@ class BaseDriver:
     def app_start(self):
         self.device.app_start(self.pkg_name, self.activity)
         self.session = self.device.session(self.pkg_name, attach=True)
+
+    def app_close(self):
+        self.device.app_stop(self.pkg_name)
 
     def open_schema(self, url_schema):
         self.device.shell(f'am start -W -a android.intent.action.VIEW -d {url_schema} {self.pkg_name}')
@@ -39,34 +49,46 @@ class BaseDriver:
         pkg_name = self.device.info.get('currentPackageName')
         return pkg_name
 
-    def do_forever(self, action, *args, **kwargs):
+    def get_current_activity(self):
+        return self.device.app_current()['activity']
+
+    def do_forever(self, action, activity='', max_num=200, *args, **kwargs):
         num = 0
         """TODO 更改为装饰器
         """
         while True:
             num += 1
-            if num > 5000:
-                num = 0
-                self.logger.info('自动重启app')
-                self.close_app()
-                time.sleep(10)
-                self.app_start()
-                self.logger.info('重启app成功')
-
+            if num > max_num:
+                break
             action_name = action.__name__
-            self.logger.info(f'{action_name} action to do...; num: {num}')
+            self.logger.info(f'{self.device_serial}: {action_name} action to do...; num: {num}')
+            # 被封禁，稍后再重试
+            retry_text = '加载失败，点击重试'
+            self.click_if_exist(text=retry_text)
+            if self.exists(text=retry_text):
+                self.logger.info('被封禁，稍后再重试')
+                # time.sleep(60 * 2)
+                sys.exit()
             if self.is_app_alive():
                 # print(self.get_source())
                 self.close_popup()
-                if self.exists(text='没有更多了~') or self.exists(text='TA还没有关注任何人'):
+                if self.is_need_break():
                     break
                 action(*args, **kwargs)
+                if activity and self.get_current_activity() != activity:
+                    self.logger.info(
+                        f'{self.device_serial}: {action_name} 跳出了页面; current_activity: {self.get_current_activity()}'
+                    )
+                    self.open_user_home('84446396723')
+                # time.sleep(random.randint(1, 5)/10)
+                self.logger.info(f'{action_name} action done!')
             else:
                 self.close_app()
                 self.click_if_exist(text="确认")
                 time.sleep(2)
                 self.app_start()
-            self.logger.info(f'{action_name} action done!')
+                # TODO 状态记忆和恢复
+                self.logger.info(f'{self.device_serial}: {action_name} 状态异常导致应用重启')
 
     def swipe(self, *args):
         self.device.swipe(*args)
@@ -111,6 +133,16 @@ class BaseDriver:
                 self.click_if_exist(text=text)
             except Exception:
                 self.logger.info(f'close_popup: {text}')
+
+    def is_need_break(self):
+        for text in self.break_list:
+            try:
+                if self.exists(text=text):
+                    print(text)
+                    return True
+            except Exception:
+                self.logger.info(f'need_break: {text}')
+        return False
 
     def is_app_alive(self):
         if self.get_current_package() != self.pkg_name:

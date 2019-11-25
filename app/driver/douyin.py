@@ -5,7 +5,6 @@ from app.models import session
 from app.models.douyin import User
 from app.service.redis_service import DouyinUser, DouyinUserFollowing, DouyinUserFollower, \
     DouyinUserErr, DouyinUserInfo, DouyinUserBigV
-from app.service.redis_service import redis_client
 
 
 class DouyinDriver(BaseDriver):
@@ -30,11 +29,12 @@ class DouyinDriver(BaseDriver):
         'billboard_star': "snssdk1128://search/trending?type=4",
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, device_serial=None):
+        super().__init__(device_serial)
         self.pkg_name = 'com.ss.android.ugc.aweme'
         self.activity = '.main.MainActivity'
         self.popup_list = ['以后再说', '取消', '我知道了', '暂不', '同意', '不允许', '长按屏幕使用更多功能', '确定']
+        self.break_list = ['没有更多了', '没有更多了~', 'TA还没有关注任何人', '暂时没有更多了', '该用户还没有发布过作品', '上拉加载更多']
         self.app_start()
 
     def open_user_home(self, uid):
@@ -60,28 +60,43 @@ class DouyinDriver(BaseDriver):
         self.open_schema(self.URL_SCHEMA_MAP['detail'].format(aweme_id=aweme_id))
 
     @retry(10)
-    def crawler_users(self):
+    def crawler_users(self, max_num=200):
         """抓取用户池用户信息
         """
-        self.app_start()
-
-        for uid in redis_client.sscan_iter(DouyinUser.get_key()):
-            self.crawler_user(uid)
+        while True:
+            self.app_close()
+            self.app_start()
+            time.sleep(0.2)
+            uid = DouyinUser.pop()
+            self.crawler_user(uid, max_num=max_num)
+            self.app_close()
 
     @retry(10)
-    def crawler_bigv_users(self):
+    def crawler_bigv_users(self, max_num=200):
         """抓取大v用户信息
         """
-        for uid, _ in redis_client.zscan_iter(DouyinUserBigV.get_key()):
-            self.crawler_user(uid)
+        while True:
+            self.app_close()
+            self.app_start()
+            time.sleep(0.2)
+            uid, _ = DouyinUserBigV.pop_min()
+            # uid = DouyinUser.pop()
+            self.crawler_user(uid, max_num=max_num)
+            self.app_close()
 
     @retry(3)
-    def crawler_user(self, uid):
+    def crawler_user(self, uid, max_num=200):
         self.logger.info(f'爬取用户信息: {uid}')
         self.open_user_home(uid)
+        time.sleep(0.2)
+        self.close_popup()
+        # 添加关注
+        # self.session(resourceId='com.ss.android.ugc.aweme:id/c6v').click_exists(timeout=1)
         time.sleep(0.1)
-        self.device.press('back')
-        redis_client.smove(DouyinUser.get_key(), DouyinUserInfo.get_key(), uid)
+        self.session(textContains='作品').click()
+        self.do_forever(self.fling, activity='com.ss.android.ugc.aweme.profile.ui.UserProfileActivity', max_num=max_num)
+        DouyinUserInfo.add(uid)
+        # self.device.press('back')
 
     @retry(10)
     def crawler_videos(self):
@@ -94,20 +109,6 @@ class DouyinDriver(BaseDriver):
         self.open_video(aweme_id)
         time.sleep(0.1)
         self.device.press('back')
-
-    @retry(10)
-    def crawler_feed(self):
-        time.sleep(2)
-        self.session(text='首页').click()
-        self.session(text='推荐').click()
-        self.do_forever(self.swipe_down)
-
-    @retry(10)
-    def crawler_city(self):
-        time.sleep(2)
-        self.session(text='首页').click()
-        self.session(text='北京').click()
-        self.do_forever(self.swipe_up)
 
     @retry(10)
     def crawler_follower(self):

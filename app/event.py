@@ -12,22 +12,8 @@ class Events:
         url = flow.request.url
         # print(url)
 
-        # 推荐
-        if '/aweme/v1/feed/' in url:
-            data = json.loads(content)
-            if data['status_code'] == 0 and data['has_more'] == 1:
-                for aweme in data['aweme_list']:
-                    uid = aweme['author_user_id']
-                    DouyinUser.add(uid)
-        # 同城
-        if '/aweme/v1/nearby/feed/' in url:
-            data = json.loads(content)
-            if data['status_code'] == 0 and data['has_more'] == 1:
-                for aweme in data['aweme_list']:
-                    uid = aweme['author_user_id']
-                    DouyinUser.add(uid)
         # 关注
-        elif '/v2/follow/feed/' in url:
+        if '/v2/follow/feed/' in url:
             data = json.loads(content)
             if data['status_code'] == 0 and data['has_more'] == 1:
                 for aweme in data['data']:
