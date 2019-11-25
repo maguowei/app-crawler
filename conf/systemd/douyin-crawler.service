@@ -1,0 +1,12 @@
+[Unit]
+Description=Douyin Crawler Service
+
+[Service]
+Type=simple
+User=nobody
+Restart=always
+RuntimeMaxSec=3600
+ExecStart=python3 crawler.py
+
+[Install]
+WantedBy=multi-user.target
