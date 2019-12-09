@@ -39,4 +39,19 @@ class User(Base):
     update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
 
+class Video(Base):
+    __tablename__ = 'video'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    create_time = Column(DateTime, default=datetime.datetime.now)
+    update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+
+class Comment(Base):
+    __tablename__ = 'comment'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    create_time = Column(DateTime, default=datetime.datetime.now)
+    update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
 # Base.metadata.create_all(engine)

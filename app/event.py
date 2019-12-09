@@ -1,7 +1,7 @@
 import json
 import mitmproxy.http
 import mitmproxy.proxy.protocol
-from app.models.douyin import User
+from app.models.douyin import User, Video, Comment
 from app.service.redis_service import DouyinUser
 
 
@@ -71,7 +71,7 @@ class Events:
                 if data['status_code'] == 0:
                     aweme_list = data['aweme_list']
                     for detail in aweme_list:
-                        pass
+                        Video(data=detail).save()
             else:
                 print('返回空')
 
@@ -93,4 +93,6 @@ class Events:
                         'text': comment['text'],
                         'digg_count': comment['digg_count'],
                     }
+
+                    Comment(data=comment).save()
 

@@ -126,7 +126,7 @@ class DouyinTopVideo(DouyinZsetBase):
     """高赞视频"""
     @classmethod
     def get_key(cls):
-        return 'varys:douyin-crawler:video_top'
+        return 'dy:video_top'
 
 
 if __name__ == '__main__':
