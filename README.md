@@ -40,10 +40,24 @@ python -m weditor
 ### 安装和信任证书
 - https://docs.mitmproxy.org/stable/concepts-certificates/
 
-### 启动
+### 本地启动
 ```bash
 make run
-dy.py crawler_feed
+./crawler.py
+```
+
+### 部署机器进程管理
+
+```bash
+sudo cp frp/systemd/douyin-crawler.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl start douyin-crawler.service
+
+# 重启服务进程
+sudo systemctl restart douyin-crawler.service
+
+# 开机自启动
+sudo systemctl enable douyin-crawler.service
 ```
 
 ## 查看爬取到的数据
@@ -52,8 +66,16 @@ http://127.0.0.1:8081/
 ### 常见问题
 
 1. 找不到设备
+
 ```bash
 adb kill-server
 adb start-server
 ```
 还是不行，重启手机试试
+
+2. `adb devices` 出现 `no permissions (user in plugdev group; are your udev rules wrong?)`
+- [adb-devices-no-permissions-user-in-plugdev-group-are-your-udev-rules-wrong](https://stackoverflow.com/questions/53887322/adb-devices-no-permissions-user-in-plugdev-group-are-your-udev-rules-wrong)
+
+3. `weditor` 打开时出现 `adbutils.errors.AdbError: device not found`
+更换设备会出现，需要清理 Chrome 的 LocalStorage
+- [openatx/weditor/issues/57](https://github.com/openatx/weditor/issues/57)

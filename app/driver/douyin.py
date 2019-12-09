@@ -3,8 +3,7 @@ from app.driver.base import BaseDriver
 from app.utils.decorator import retry
 from app.models import session
 from app.models.douyin import User
-from app.service.redis_service import DouyinUser, DouyinUserFollowing, DouyinUserFollower, \
-    DouyinUserErr, DouyinUserInfo, DouyinUserBigV
+from app.service.redis_service import DouyinTopVideo, DouyinUserBigV
 
 
 class DouyinDriver(BaseDriver):
@@ -61,28 +60,18 @@ class DouyinDriver(BaseDriver):
 
     @retry(10)
     def crawler_users(self, max_num=200):
-        """抓取用户池用户信息
-        """
-        while True:
-            self.app_close()
-            self.app_start()
-            time.sleep(0.2)
-            uid = DouyinUser.pop()
-            self.crawler_user(uid, max_num=max_num)
-            self.app_close()
-
-    @retry(10)
-    def crawler_bigv_users(self, max_num=200):
         """抓取大v用户信息
         """
-        while True:
+        while DouyinUserBigV.nums():
             self.app_close()
             self.app_start()
             time.sleep(0.2)
             uid, _ = DouyinUserBigV.pop_min()
-            # uid = DouyinUser.pop()
             self.crawler_user(uid, max_num=max_num)
             self.app_close()
+        else:
+            # DouyinUserBigV.export()
+            pass
 
     @retry(3)
     def crawler_user(self, uid, max_num=200):
@@ -95,20 +84,34 @@ class DouyinDriver(BaseDriver):
         time.sleep(0.1)
         self.session(textContains='作品').click()
         self.do_forever(self.fling, activity='com.ss.android.ugc.aweme.profile.ui.UserProfileActivity', max_num=max_num)
-        DouyinUserInfo.add(uid)
         # self.device.press('back')
 
-    @retry(10)
-    def crawler_videos(self):
-        for aweme_id in ['6752388879812136203', '6746831112162528519', '6752395655202852100']:
-            self.crawler_video(aweme_id)
+    @retry(3)
+    def crawler_comments(self):
+        while DouyinTopVideo.nums():
+            aweme_id = DouyinTopVideo.pop_max()
+            self.crawler_comment(aweme_id)
 
     @retry(3)
-    def crawler_video(self, aweme_id):
-        self.logger.info(f'爬取视频: {aweme_id}')
+    def crawler_comment(self, aweme_id):
+        self.app_close()
+        self.app_start()
+        self.logger.info(f'爬取视频评论: {aweme_id}')
         self.open_video(aweme_id)
-        time.sleep(0.1)
-        self.device.press('back')
+        time.sleep(0.2)
+        self.close_popup()
+        self.session(resourceId="com.ss.android.ugc.aweme:id/v3").click()
+        time.sleep(0.2)
+        for i in range(150):
+            # self.swipe_up()
+            self.fling()
+            self.logger.info(f'fling: {i}')
+            time.sleep(0.1)
+            if self.exists(text='暂时没有更多了'):
+                break
+            # if self.exists(text='暂无评论，来抢沙发'):
+            #     break
+        self.app_close()
 
     @retry(10)
     def crawler_follower(self):
@@ -117,24 +120,19 @@ class DouyinDriver(BaseDriver):
         time.sleep(2)
         users = session.query(User.uid)
         for user in users:
-            uid = user.uid
-            if not (DouyinUserFollower.exist(uid) or DouyinUserErr.exist(uid)):
-                self.logger.info(f'爬取用户关注列表: {uid}')
-                self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
-                time.sleep(0.2)
-                if self.session(resourceId="com.ss.android.ugc.aweme:id/bq3").exists:  # 用户昵称
-                    # if self.session(text='这是私密帐号').exists:  # 跳过私密账号
-                    #     continue
-                    self.session(resourceId='com.ss.android.ugc.aweme:id/ah1').click()  # 关注列表按钮
-                    self.do_forever(self.fling)
-                    DouyinUserFollower.add(uid)
-                else:
-                    self.logger.info(f'用户异常: {uid}')
-                    DouyinUserErr.add(uid)
-                self.device.press('back')
-                time.sleep(0.2)
+            uid = user['uid']
+            self.logger.info(f'爬取用户关注列表: {uid}')
+            self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
+            time.sleep(0.2)
+            if self.session(resourceId="com.ss.android.ugc.aweme:id/bq3").exists:  # 用户昵称
+                # if self.session(text='这是私密帐号').exists:  # 跳过私密账号
+                #     continue
+                self.session(resourceId='com.ss.android.ugc.aweme:id/ah1').click()  # 关注列表按钮
+                self.do_forever(self.fling)
             else:
-                self.logger.info(f'用户关注已经爬取: {uid}')
+                self.logger.info(f'用户异常: {uid}')
+            self.device.press('back')
+            time.sleep(0.2)
 
     @retry(10)
     def crawler_following(self):
@@ -143,20 +141,16 @@ class DouyinDriver(BaseDriver):
         time.sleep(2)
         users = session.query(User.uid)
         for user in users:
-            uid = user.uid
-            if not (DouyinUserFollower.exist(uid) or DouyinUserErr.exist(uid)):
-                self.logger.info(f'爬取用户粉丝列表: {uid}')
-                self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
+            uid = user['uid']
+            self.logger.info(f'爬取用户粉丝列表: {uid}')
+            self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
+            time.sleep(0.5)
+            if self.session(resourceId="com.ss.android.ugc.aweme:id/bq3").exists:
+                self.session(text='粉丝').click()
                 time.sleep(0.5)
-                if self.session(resourceId="com.ss.android.ugc.aweme:id/bq3").exists:
-                    self.session(text='粉丝').click()
-                    time.sleep(0.5)
-                    self.do_forever(self.fling)
-                    DouyinUserFollowing.add(uid)
-                else:
-                    self.logger.info(f'用户异常: {uid}')
+                self.do_forever(self.fling)
             else:
-                self.logger.info(f'用户粉丝已经爬取: {uid}')
+                self.logger.info(f'用户异常: {uid}')
 
     def search_users(self, uids=None):
         """搜索用户"""

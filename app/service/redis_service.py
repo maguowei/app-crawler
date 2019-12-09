@@ -5,7 +5,7 @@ from app import settings
 redis_client = redis.Redis(**settings.REDIS)
 
 
-class DouyinUserZsetBase:
+class DouyinZsetBase:
     @classmethod
     def get_key(cls):
         raise NotImplementedError()
@@ -31,16 +31,28 @@ class DouyinUserZsetBase:
 
     @classmethod
     def pop_max(cls):
-        return redis_client.zpopmax(cls.get_key())
+        values = redis_client.zrevrange(cls.get_key(), 0, 0)
+        value = values[0] if values else None
+        if value:
+            redis_client.zrem(cls.get_key(), value)
+        return value
 
     @classmethod
     def pop_min(cls):
-        return redis_client.zpopmin(cls.get_key())
+        values = redis_client.zrange(cls.get_key(), 0, 0)
+        value = values[0] if values else None
+        if value:
+            redis_client.zrem(cls.get_key(), value)
+        return value
 
     @classmethod
     def export(cls):
-        for uid in redis_client.zscan_iter(cls.get_key()):
-            print(uid)
+        for uid, score in redis_client.zscan_iter(cls.get_key()):
+            print(uid, score)
+
+    def __contains__(self, item):
+        value = redis_client.zscore(self.get_key(), item)
+        return True if value else False
 
     def __str__(self):
         return f'{self.__class__.__name__}: {self.nums()}'
@@ -66,10 +78,6 @@ class DouyinBase:
         redis_client.srem(key, uid)
 
     @classmethod
-    def exist(cls, uid):
-        return redis_client.sismember(cls.get_key(), uid)
-
-    @classmethod
     def nums(cls):
         key = cls.get_key()
         return redis_client.scard(key)
@@ -79,29 +87,25 @@ class DouyinBase:
         for uid in redis_client.sscan_iter(cls.get_key()):
             print(uid)
 
+    def __contains__(self, item):
+        return redis_client.sismember(self.get_key(), item)
+
     def __str__(self):
         return f'{self.__class__.__name__}: {self.nums()}'
 
 
 class DouyinUser(DouyinBase):
-    """抖音用户池"""
+    """待处理抖音用户"""
     @classmethod
     def get_key(cls):
         return 'dy:user'
 
 
-class DouyinUserBigV(DouyinUserZsetBase):
+class DouyinUserBigV(DouyinZsetBase):
     """抖音大V用户池"""
     @classmethod
     def get_key(cls):
         return 'dy:user:score'
-
-
-class DouyinUserInfo(DouyinBase):
-    """用户信息已抓取"""
-    @classmethod
-    def get_key(cls):
-        return 'dy:user_info'
 
 
 class DouyinUserFollowing(DouyinBase):
@@ -118,26 +122,17 @@ class DouyinUserFollower(DouyinBase):
         return 'dy:user_follower'
 
 
-class DouyinChallenge(DouyinBase):
+class DouyinTopVideo(DouyinZsetBase):
+    """高赞视频"""
     @classmethod
     def get_key(cls):
-        return 'dy:challenge'
-
-
-class DouyinUserErr(DouyinBase):
-    """异常用户"""
-    @classmethod
-    def get_key(cls):
-        return 'dy:user_err'
+        return 'varys:douyin-crawler:video_top'
 
 
 if __name__ == '__main__':
     print(DouyinUser())
     print(DouyinUserBigV())
-    print(DouyinUserInfo())
     print(DouyinUserFollower())
     print(DouyinUserFollowing())
-    print(DouyinChallenge())
-    print(DouyinUserErr())
-
+    print(DouyinTopVideo())
     # DouyinUserBigV.export()
