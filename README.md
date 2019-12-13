@@ -42,22 +42,24 @@ python -m weditor
 
 ### 本地启动
 ```bash
-make run
+cp .env.tpl .env
+cp -r .mitmproxy ~/.mitmproxy
+make run-mitmproxy
 ./crawler.py
 ```
 
 ### 部署机器进程管理
 
 ```bash
-sudo cp frp/systemd/douyin-crawler.service /etc/systemd/system/
+sudo cp frp/systemd/app-crawler.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl start douyin-crawler.service
+sudo systemctl start app-crawler.service
 
 # 重启服务进程
-sudo systemctl restart douyin-crawler.service
+sudo systemctl restart app-crawler.service
 
 # 开机自启动
-sudo systemctl enable douyin-crawler.service
+sudo systemctl enable app-crawler.service
 ```
 
 ## 查看爬取到的数据

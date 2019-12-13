@@ -66,11 +66,11 @@ class DouyinDriver(BaseDriver):
             self.app_close()
             self.app_start()
             time.sleep(0.2)
-            uid, _ = DouyinUserBigV.pop_min()
+            uid = DouyinUserBigV.pop_min()
             self.crawler_user(uid, max_num=max_num)
             self.app_close()
         else:
-            # DouyinUserBigV.export()
+            # user import
             pass
 
     @retry(3)
@@ -89,7 +89,7 @@ class DouyinDriver(BaseDriver):
     @retry(3)
     def crawler_comments(self):
         while DouyinTopVideo.nums():
-            aweme_id = DouyinTopVideo.pop_max()
+            aweme_id, _ = DouyinTopVideo.pop_max()
             self.crawler_comment(aweme_id)
 
     @retry(3)
@@ -151,17 +151,3 @@ class DouyinDriver(BaseDriver):
                 self.do_forever(self.fling)
             else:
                 self.logger.info(f'用户异常: {uid}')
-
-    def search_users(self, uids=None):
-        """搜索用户"""
-        self.session(resourceId="com.ss.android.ugc.aweme:id/azc").click()
-        self.session.send_keys("shusheng1028", clear=True)
-        self.session(resourceId="com.ss.android.ugc.aweme:id/di9").click()
-        self.session(resourceId="android:id/text1", text="用户").click()
-
-        for unique_id in uids:
-            self.logger.info(f'unique_id: {unique_id}, 爬取')
-            self.session.send_keys(unique_id, clear=True)
-            self.session(resourceId="com.ss.android.ugc.aweme:id/di9").click()
-            time.sleep(0.1)
-

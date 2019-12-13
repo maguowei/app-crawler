@@ -54,4 +54,5 @@ class Comment(Base):
     create_time = Column(DateTime, default=datetime.datetime.now)
     update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
+
 # Base.metadata.create_all(engine)

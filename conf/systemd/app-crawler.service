@@ -1,5 +1,5 @@
 [Unit]
-Description=Douyin Crawler Service
+Description=App Crawler Service
 
 [Service]
 Type=simple
