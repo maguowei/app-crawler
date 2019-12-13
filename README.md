@@ -81,3 +81,8 @@ adb start-server
 3. `weditor` 打开时出现 `adbutils.errors.AdbError: device not found`
 更换设备会出现，需要清理 Chrome 的 LocalStorage
 - [openatx/weditor/issues/57](https://github.com/openatx/weditor/issues/57)
+
+4. 测试机型
+
+- Xiaomi Mi 6
+- Redmi Note 8
