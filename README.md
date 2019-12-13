@@ -2,6 +2,8 @@
 
 crawling app by uiautomator2 &amp; mitmproxy
 
+使用 URL_SCHEMA 跳转实现抖音用户视频和视频评论的抓取
+
 - [uiautomator2](https://github.com/openatx/uiautomator2)
 - [浅谈自动化测试工具 python-uiautomator2](https://testerhome.com/topics/11357)
 
