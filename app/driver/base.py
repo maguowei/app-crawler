@@ -13,7 +13,6 @@ class BaseDriver:
             self.device = u2.connect(self.device_serial)
         else:
             self.device = u2.connect()
-        self.device = u2.connect()
         self.session = None
         self.pkg_name = None
         self.activity = None
