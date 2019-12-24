@@ -4,6 +4,27 @@ crawling app by uiautomator2 &amp; mitmproxy
 
 使用 URL_SCHEMA 跳转实现抖音用户视频和视频评论的抓取
 
+```python3
+URL_SCHEMA_MAP = {
+    'home': "snssdk1128://feed?refer=web",
+    'user': 'snssdk1128://user/profile/{uid}?refer=web',
+    'detail': 'snssdk1128://aweme/detail/{aweme_id}?refer=web',
+    'challenge': 'snssdk1128://challenge/detail/{challenge_id}?refer=web',
+    'music': 'snssdk1128://music/detail/{music_id}?refer=web',
+    'live': 'snssdk1128://live?room_id={room_id}&user_id={user_id}&from=webview&refer=web',
+    'poi":': 'snssdk1128://poi/?id={poi_id}',
+    'webview': 'snssdk1128://webview?url={url}&from=webview&refer=web',
+    'webview_fullscreen': 'snssdk1128://webview?url={url}&from=webview&hide_nav_bar=1&refer=web',
+    'poidetail': 'snssdk1128://poi/detail?id={id}&from=webview&refer=web',
+    'forward': 'snssdk1128://forward/detail/{id}',
+    'billboard_word': 'snssdk1128://search/trending',
+    'billboard_video': "snssdk1128://search/trending?type=1",
+    'billboard_music': "snssdk1128://search/trending?type=2",
+    'billboard_positive': "snssdk1128://search/trending?type=3",
+    'billboard_star': "snssdk1128://search/trending?type=4",
+}
+```
+
 - [uiautomator2](https://github.com/openatx/uiautomator2)
 - [浅谈自动化测试工具 python-uiautomator2](https://testerhome.com/topics/11357)
 
