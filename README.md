@@ -85,10 +85,8 @@ sudo systemctl restart app-crawler.service
 sudo systemctl enable app-crawler.service
 ```
 
-## 查看爬取到的数据
-http://127.0.0.1:8081/
 
-### 常见问题
+## 常见问题
 
 1. 找不到设备
 
