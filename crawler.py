@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+
+import fire
 import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import adbutils
@@ -15,16 +17,20 @@ class DeviceManager:
             self.drivers.append(DouyinDriver(device.serial))
 
     def run(self):
-        with ThreadPoolExecutor(max_workers=len(d.drivers)) as executor:
-            driver_for_comment = random.choice(d.drivers)
-            d.drivers.remove(driver_for_comment)
-            future_to_driver = {executor.submit(driver.crawler_users, 1): driver for driver in d.drivers}
+        with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
+            driver_for_comment = random.choice(self.drivers)
+            self.drivers.remove(driver_for_comment)
+            future_to_driver = {executor.submit(driver.crawler_users, 1): driver for driver in self.drivers}
             executor.submit(driver_for_comment.crawler_comments)
             for future in as_completed(future_to_driver):
                 driver = future_to_driver[future]
                 executor.submit(driver.crawler_comments)
 
+    def crawler_follower(self, max_num=200):
+        with ThreadPoolExecutor(max_workers=len(self.drivers)) as executor:
+            for driver in self.drivers:
+                executor.submit(driver.crawler_follower, max_num)
+
 
 if __name__ == '__main__':
-    d = DeviceManager()
-    d.run()
+    fire.Fire(DeviceManager)
