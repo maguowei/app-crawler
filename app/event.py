@@ -16,9 +16,19 @@ class Events:
         if '/aweme/v1/user/follower/list/' in url:
             data = json.loads(content)
             if data['status_code'] == 0 and data['has_more'] == 1:
+                uid = flow.request.query.get('user_id')
                 for follower in data['followers']:
-                    uid = follower['uid']
-                    # DouyinUser.add(uid)
+                    follow_uid = follower['uid']
+                    follow_data = {
+                        'uid': uid,
+                        'follow_uid': follow_uid,
+                        'sex': follower['gender'],
+                        'birthday': follower['birthday'],
+                        'city': '',
+                    }
+                    # db['douyin_follow'].replace_one({'uid': uid, 'follow_uid': follow_uid}, follow_data, upsert=True)
+                    # todo 存储
+                    pass
 
         # 用户关注列表
         elif '/aweme/v1/user/following/list/' in url:
@@ -33,7 +43,7 @@ class Events:
             data = json.loads(content)
             if data['status_code'] == 0:
                 user = data['user']
-                data = {
+                user_data = {
                     'uid': user['uid'],
                     'short_id': user['short_id'],
                     'unique_id': user['unique_id'],
@@ -62,7 +72,7 @@ class Events:
                     'is_gov_media_vip': user['is_gov_media_vip'],
                     'followers_detail': user['followers_detail'],
                 }
-                User(**data).save()
+                User(**user_data).save()
 
         # 用户视频列表
         elif '/aweme/v1/aweme/post/' in url:

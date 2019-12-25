@@ -78,7 +78,7 @@ class BaseDriver:
                     self.logger.info(
                         f'{self.device_serial}: {action_name} 跳出了页面; current_activity: {self.get_current_activity()}'
                     )
-                    self.open_user_home('84446396723')
+                    break
                 # time.sleep(random.randint(1, 5)/10)
                 self.logger.info(f'{action_name} action done!')
             else:

@@ -114,7 +114,7 @@ class DouyinDriver(BaseDriver):
         self.app_close()
 
     @retry(10)
-    def crawler_follower(self):
+    def crawler_following(self):
         """抓取用户关注列表
         """
         time.sleep(2)
@@ -135,19 +135,22 @@ class DouyinDriver(BaseDriver):
             time.sleep(0.2)
 
     @retry(10)
-    def crawler_following(self):
+    def crawler_follower(self, max_num=200):
         """抓取用户粉丝列表
         """
-        time.sleep(2)
-        users = session.query(User.uid)
-        for user in users:
-            uid = user['uid']
+        while DouyinUserBigV.nums():
+            self.app_close()
+            self.app_start()
+            time.sleep(0.2)
+            uid = DouyinUserBigV.pop_max()
             self.logger.info(f'爬取用户粉丝列表: {uid}')
             self.open_schema(self.URL_SCHEMA_MAP['user'].format(uid=uid))
             time.sleep(0.5)
-            if self.session(resourceId="com.ss.android.ugc.aweme:id/bq3").exists:
+            if self.session(resourceId='com.ss.android.ugc.aweme:id/ahb').exists:
                 self.session(text='粉丝').click()
                 time.sleep(0.5)
-                self.do_forever(self.fling)
+                self.do_forever(self.fling, activity='com.ss.android.ugc.aweme.following.ui.FollowRelationTabActivity',
+                                max_num=max_num)
             else:
                 self.logger.info(f'用户异常: {uid}')
+            self.app_close()

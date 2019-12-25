@@ -6,7 +6,7 @@ Type=simple
 User=nobody
 Restart=always
 RuntimeMaxSec=3600
-ExecStart=python3 crawler.py
+ExecStart=python3 crawler.py run
 
 [Install]
 WantedBy=multi-user.target

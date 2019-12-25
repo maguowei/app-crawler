@@ -63,12 +63,34 @@ python -m weditor
 ### 安装和信任证书
 - https://docs.mitmproxy.org/stable/concepts-certificates/
 
-### 本地启动
+### 使用
+
 ```bash
 cp .env.tpl .env
 cp -r .mitmproxy ~/.mitmproxy
 make run-mitmproxy
-./crawler.py
+
+# 数据库启动
+make up
+
+# 导入测试数据
+./app/tools/simple_data_import.py
+
+# 指定设备抓取用户信息和视频列表
+./dy.py crawler_users --max_num=200 --device_serial=xxxxx
+
+# 指定设备抓取
+./dy.py crawler_comments --device_serial=xxxxxxx
+
+# 指定设备抓取用户粉丝
+./dy.py crawler_follower --device_serial=72bf965
+
+# 多设备 抓取用户粉丝
+./crawler.py crawler_follower --max_num=200
+
+# 多设备 抓取用户信息、评论
+./crawler.py run
+
 ```
 
 ### 部署机器进程管理
